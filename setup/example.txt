@@ -1,0 +1,144 @@
+this is a rough outline of steps taken, not intended for usage
+
+nano ~/.bashrc
+	export PATH=$PATH:~/.local/bin
+
+	export SPARK_HOME=/home/ralfs/Desktop/spark
+	export PATH=$PATH:$SPARK_HOME
+	export PYTHONPATH=$SPARK_HOME/python:$PYTHONPATH
+	export PYSPARK_DRIVER_PYTHON="jupyter"
+	export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
+	export PYSPARK_PYTHON=python3
+
+	export HBASE_HOME=/home/ralfs/Desktop/hbase
+	export PATH=$PATH:$HBASE_HOME/bin
+
+	export PATH=/home/ralfs/Desktop/rondb/bin:$PATH
+	export LD_LIBRARY_PATH=/home/bubriks/Desktop/rondb/lib
+
+	export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+	export PATH=$JAVA_HOME/bin:$PATH
+source ~/.bashrc
+
+sudo apt install python3-pip
+pip3 install jupyter
+pip3 install py4j
+
+sudo apt install openjdk-8-jdk scala git -y
+wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop3.2.tgz
+tar -xvf spark-3.2.1-bin-hadoop3.2.tgz
+mv spark-3.2.1-bin-hadoop3.2 spark
+rm spark-3.2.1-bin-hadoop3.2.tgz
+
+mkdir jars
+wget https://archiva.hops.works/repository/Hops/com/mysql/ndb/clusterj-rondb/21.04.3/clusterj-rondb-21.04.3.jar
+wget https://repo.hops.works/dev/ralfs/hudi-spark3-bundle_2.12-0.10.0.1.jar
+wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.28/mysql-connector-java-8.0.28.jar
+
+mkdir thesis
+jupyter notebook
+# provide the notebook
+
+# https://www.guru99.com/hbase-installation-guide.html
+wget https://dlcdn.apache.org/hbase/2.4.11/hbase-2.4.11-bin.tar.gz
+tar -xvf hbase-2.4.11-bin.tar.gz
+mv hbase-2.4.11 hbase
+rm hbase-2.4.11-bin.tar.gz
+
+nano $HBASE_HOME/conf/hbase-env.sh
+	export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+nano $HBASE_HOME/conf/hbase-site.xml
+  <property>
+    <name>hbase.rootdir</name>
+    <value>file:///home/ralfs/Desktop/HBASE/hbase</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/home/ralfs/Desktop/HBASE/zookeeper</value>
+  </property>
+start-hbase.sh
+jps
+
+hbase shell
+	create 'hudi', 'commit_ts', 'file_name', 'partition_path', '_s'
+
+# https://docs.rondb.com/rondb_installation/
+sudo groupadd rondb
+sudo useradd -g rondb -s /bin/bash rondb
+
+wget http://repo.hops.works/master/rondb-21.04.1-linux-glibc2.17-x86_64.tar.gz
+tar -xvf rondb-21.04.1-linux-glibc2.17-x86_64.tar.gz
+mv rondb-21.04.1-linux-glibc2.17-x86_64 rondb
+rm rondb-21.04.1-linux-glibc2.17-x86_64.tar.gz
+
+mkdir RONDB
+cd RONDB
+mkdir config_database_directory
+mkdir mysql
+mkdir ndb
+nano config.ini
+	# Data node defaults
+	[ndbd default]
+	DataDir=/home/ralfs/Desktop/RONDB/ndb
+	NoOfReplicas=1
+	TotalMemoryConfig=20G
+	MaxNoOfConcurrentOperations=1000000
+
+	#NDB management server defaults
+	[ndb_mgmd default]
+	DataDir=/home/ralfs/Desktop/RONDB/ndb
+
+	#The management server node
+	[ndb_mgmd]
+	Hostname=127.0.0.1
+	NodeId=65
+	PortNumber=1186
+
+	#The first data node
+	[ndbd]
+	NodeId=1
+	Hostname=127.0.0.1
+
+	#The first MySQL Server
+	[mysqld]
+	NodeId=67
+	Hostname=127.0.0.1
+
+	[mysqld]
+	NodeId=68
+	Hostname=127.0.0.1
+
+	# API nodes for use by NDB tools
+	#[api]
+	#NodeId=231
+
+sudo nano /etc/mysql/my.cnf
+	[mysqld]
+	ndbcluster
+	ndb-connectstring=127.0.0.1:1186
+
+sudo apt install libncurses5
+
+ndb_mgmd --config-file=/home/ralfs/Desktop/RONDB/config.ini \
+  --configdir=/home/ralfs/Desktop/RONDB/config_database_directory \
+  --ndb-nodeid=65
+
+ndbmtd --ndb-connectstring=127.0.0.1:1186 --ndb-nodeid=1
+
+# 2nd time without --initialize 
+mysqld --ndbcluster \
+  --initialize-insecure \
+  --ndb-connectstring=127.0.0.1:1186 \
+  --log-error=/home/ralfs/Desktop/RONDB/error_log \
+  --datadir=/home/ralfs/Desktop/RONDB/mysql \
+  --ndb-cluster-connection-pool=4 \
+  --ndb-cluster-connection-pool-nodeids=67,68,69,70 &
+
+ndb_mgm
+show
+
+# for vm
+sudo adduser bubriks vboxsf
+
+# for tests (or hbase-daemon.sh start thrift)
+hbase thrift start
