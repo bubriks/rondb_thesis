@@ -13,19 +13,19 @@ import os
 results_dir = "C://Users//bubri//OneDrive//Desktop//thesis//final//new//change_test_size//"
 results = "//results.csv"
 
-results_df_1 = pd.read_csv(results_dir + '100000_10_1' + results)
+results_df_1 = pd.read_csv(results_dir + '10000000_10_1' + results)
 results_df_1['test_size'] = 1
 
-results_df_10 = pd.read_csv(results_dir + '100000_10_10' + results)
+results_df_10 = pd.read_csv(results_dir + '10000000_10_10' + results)
 results_df_10['test_size'] = 10
 
-results_df_1000 = pd.read_csv(results_dir + '100000_10_100' + results)
+results_df_1000 = pd.read_csv(results_dir + '10000000_10_100' + results)
 results_df_1000['test_size'] = 100
 
-results_df_10000 = pd.read_csv(results_dir + '100000_10_1000' + results)
+results_df_10000 = pd.read_csv(results_dir + '10000000_10_1000' + results)
 results_df_10000['test_size'] = 1000
 
-results_df_100000 = pd.read_csv(results_dir + '100000_10_10000' + results)
+results_df_100000 = pd.read_csv(results_dir + '10000000_10_10000' + results)
 results_df_100000['test_size'] = 10000
 
 #results_df_1000000 = pd.read_csv(results_dir + '100000_10_100000' + results)
@@ -88,7 +88,7 @@ def data_size_line_plot():
         plt.show()
         print(test_case_tuple[0])
     
-#data_size_line_plot()
+data_size_line_plot()
 
 
 
@@ -106,7 +106,7 @@ def data_size_line_plot():
 
 
 
-
+'''
 
 # make df friendly for visualization
 
@@ -138,3 +138,4 @@ def data_size_line_plot():
         print(test_case_tuple[0])
     
 data_size_line_plot()
+'''

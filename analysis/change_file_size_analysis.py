@@ -14,16 +14,16 @@ import os
 results_dir = "C://Users//bubri//OneDrive//Desktop//thesis//final//new//change_file_size//"
 results = "//results.csv"
 
-results_df_1mb = pd.read_csv(results_dir + '1000000_10_100_1mb' + results)
+results_df_1mb = pd.read_csv(results_dir + '10000000_10_100_1mb' + results)
 results_df_1mb['mb'] = 1
 
-results_df_60mb = pd.read_csv(results_dir + '1000000_10_100_60mb' + results)
+results_df_60mb = pd.read_csv(results_dir + '10000000_10_100_60mb' + results)
 results_df_60mb['mb'] = 60
 
-results_df_120mb = pd.read_csv(results_dir + '1000000_10_100_120mb' + results)
+results_df_120mb = pd.read_csv(results_dir + '10000000_10_100_120mb' + results)
 results_df_120mb['mb'] = 120
 
-results_df_180mb = pd.read_csv(results_dir + '1000000_10_100_180mb' + results)
+results_df_180mb = pd.read_csv(results_dir + '10000000_10_100_180mb' + results)
 results_df_180mb['mb'] = 180
 
 
